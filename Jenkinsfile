@@ -10,6 +10,7 @@ pipeline {
                 }
             }
             steps {
+                cleanWs()
                 sh '''
                     ls -la
                     npm ci
@@ -34,5 +35,11 @@ pipeline {
                 '''
             }
         }
+
+         post {
+        success {
+            archiveArtifacts artifacts: 'node_modules/**'
+        }
+    }
     }
 }
