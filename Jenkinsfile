@@ -1,5 +1,5 @@
 pipeline {
-    agent any 
+    agent any
 
     stages {
         stage('Build') {
@@ -10,7 +10,6 @@ pipeline {
                 }
             }
             steps {
-                cleanWs()
                 sh '''
                     ls -la
                     npm ci
@@ -22,7 +21,7 @@ pipeline {
 
         stage('Test') {
             agent {
-                docker{
+                docker {
                     image 'node:18-alpine'
                     reuseNode true
                 }
@@ -34,12 +33,6 @@ pipeline {
                 npm test
                 '''
             }
-        }
-
-    }
-         post {
-        success {
-            archiveArtifacts artifacts: 'node_modules/**'
         }
     }
 }
