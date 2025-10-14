@@ -36,10 +36,10 @@ pipeline {
             }
         }
 
+    }
          post {
         success {
             archiveArtifacts artifacts: 'node_modules/**'
         }
-    }
     }
 }
