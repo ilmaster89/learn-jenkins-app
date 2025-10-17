@@ -16,6 +16,7 @@ pipeline {
             }
             steps {
                 sh '''
+                    echo "started build phase"
                     ls -la
                     npm ci
                     npm run build
