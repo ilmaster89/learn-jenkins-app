@@ -82,35 +82,34 @@ pipeline {
                 '''
             }
         }
-    }
-    stage('Prod E2E Tests') {
-        agent {
-            docker {
-                image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                reuseNode true
-            }
-        }
 
-        environment {
-            CI_ENVIRONMENT_URL = 'https://aesthetic-begonia-156de6.netlify.app'
-        }
-        steps {
-            sh '''
+        stage('Prod E2E Tests') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+
+            environment {
+                CI_ENVIRONMENT_URL = 'https://aesthetic-begonia-156de6.netlify.app'
+            }
+            steps {
+                sh '''
                     npx playwright test --reporter=html
                 '''
-        }
-
-        post {
-            always {
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright REMOTE', reportTitles: '', userWrapperFileDirectly: true])
             }
-        }
 
-    }
+            post {
+                always {
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright REMOTE', reportTitles: '', userWrapperFileDirectly: true])
+                }
+            }
+    }}
 
     post {
         always {
             junit 'jest-results/junit.xml'
         }
     }
-}
+    }
