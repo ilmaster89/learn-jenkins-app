@@ -83,7 +83,6 @@ pipeline {
             }
         }
     }
-
     stage('Prod E2E Tests') {
         agent {
             docker {
@@ -106,6 +105,7 @@ pipeline {
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright REMOTE', reportTitles: '', userWrapperFileDirectly: true])
             }
         }
+
     }
 
     post {
