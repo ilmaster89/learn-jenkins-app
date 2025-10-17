@@ -71,6 +71,7 @@ pipeline {
                 sh '''
                   npm i netlify-cli@20.1.1
                   node_modules/.bin/netlify status
+                  node_modules/.bin/netlify deploy --dir=build --prod
                 '''
             }
         }
