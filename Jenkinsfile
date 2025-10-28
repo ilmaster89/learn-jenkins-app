@@ -85,7 +85,13 @@ pipeline {
                 '''
             }
         }
-
+        stage('Manual Approval') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    input message: 'Proceed with deployment?', ok: 'Yes, deploy!'
+                }
+            }
+        }
         stage('Deploy') {
             agent {
                 docker {
