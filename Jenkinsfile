@@ -70,23 +70,23 @@ pipeline {
             }
         }
 
-        stage('StagingDeploy') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                  npm i netlify-cli@20.1.1
-                   node_modules/.bin/netlify logout
-                  node_modules/.bin/netlify login
-                  node_modules/.bin/netlify status
-                  node_modules/.bin/netlify deploy --dir=build
-                '''
-            }
-        }
+        // stage('StagingDeploy') {
+        //     agent {
+        //         docker {
+        //             image 'node:18-alpine'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //           npm i netlify-cli@20.1.1
+        //            node_modules/.bin/netlify logout
+        //           node_modules/.bin/netlify login
+        //           node_modules/.bin/netlify status
+        //           node_modules/.bin/netlify deploy --dir=build
+        //         '''
+        //     }
+        // }
 
         stage('Deploy') {
             agent {
