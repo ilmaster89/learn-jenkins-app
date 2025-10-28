@@ -87,7 +87,7 @@ pipeline {
                  npm i netlify-cli@20.1.1 node-jq
                   node_modules/.bin/netlify status
                   node_modules/.bin/netlify deploy --dir=build --json > deploy.json
-                  CI_ENVIRONMENT_URL=${node_modules/.bin/node-jq -r '.deploy_url' deploy.json}
+                  CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy.json)
                     npx playwright test --reporter=html
                 '''
             }
