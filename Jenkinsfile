@@ -4,7 +4,7 @@ pipeline {
     environment {
         NETLIFY_SITE_ID = 'd3e939bc-bff4-4343-96b3-715de35c6758'
         // credentials -> va a prendere direttamente dal context di jenkins (config via dashboard)
-        NETLIFY_AUTH_TOKEN = credentials('netlify-token_2')
+        NETLIFY_AUTH_TOKEN = credentials('netlify_token_2')
     }
 
     stages {
