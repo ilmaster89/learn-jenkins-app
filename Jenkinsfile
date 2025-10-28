@@ -82,10 +82,37 @@ pipeline {
                   npm i netlify-cli@20.1.1 node-jq
                   node_modules/.bin/netlify status
                   node_modules/.bin/netlify deploy --dir=build --json > deploy.json
-                  node_modules/.bin/node-jq -r './deploy_url' deploy.json
                 '''
+                script {
+                    env.DEPLOY_URL=sh(script: "node_modules/.bin/node-jq -r './deploy_url' deploy.json", returnStdout: true)
+                }
             }
         }
+
+   stage('Staging E2E Tests') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+
+            environment {
+                CI_ENVIRONMENT_URL ="$env.DEPLOY_URL"
+            }
+            steps {
+                sh '''
+                    npx playwright test --reporter=html
+                '''
+            }
+
+            post {
+                always {
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright STAGING', reportTitles: '', useWrapperFileDirectly: true])
+                }
+            }
+    }
+
         stage('Approval') {
             steps {
                 timeout(time: 15, unit: 'MINUTES') {
@@ -131,7 +158,8 @@ pipeline {
                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright REMOTE', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
-    }}
+    }
+    }
 
     post {
         always {
