@@ -85,9 +85,9 @@ pipeline {
                 '''
             }
         }
-        stage('Manual Approval') {
+        stage('Approval') {
             steps {
-                timeout(time: 1, unit: 'HOURS') {
+                timeout(time: 15, unit: 'MINUTES') {
                     input message: 'Proceed with deployment?', ok: 'Yes, deploy!'
                 }
             }
