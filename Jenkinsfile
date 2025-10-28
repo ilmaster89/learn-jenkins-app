@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         NETLIFY_SITE_ID = 'd3e939bc-bff4-4343-96b3-715de35c6758'
+        // credentials -> va a prendere direttamente dal context di jenkins (config via dashboard)
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
     }
 
@@ -11,6 +12,7 @@ pipeline {
             agent {
                 docker {
                     image 'node:18-alpine'
+                    // non ricrea un nuovo workspace, mantiene i dati sincronizzati
                     reuseNode true
                 }
             }
@@ -26,6 +28,7 @@ pipeline {
         }
 
         stage('Run Tests') {
+            // avvia gli stage in maniera asincrona, attenzione a unire stage di lunghezze troppo diverse
             parallel {
                 stage('Unit') {
                     agent {
@@ -66,6 +69,22 @@ pipeline {
                 }
             }
         }
+
+        stage('StagingDeploy') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                  npm i netlify-cli@20.1.1
+                  node_modules/.bin/netlify status
+                  node_modules/.bin/netlify deploy --dir=build
+                '''
+            }
+        }<
 
         stage('Deploy') {
             agent {
