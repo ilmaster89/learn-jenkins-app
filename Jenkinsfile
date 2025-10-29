@@ -9,6 +9,14 @@ pipeline {
     }
 
     stages {
+
+        stage('Docker') {
+            steps {
+                sh '''
+                    docker build -t my-pw .
+                '''
+            }
+        }
         stage('Build') {
             agent {
                 docker {
