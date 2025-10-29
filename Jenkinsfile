@@ -19,6 +19,7 @@ pipeline {
                     image 'amazon/aws-cli'
                     // override dell'entrypoint per evitare errori
                     args "--entrypoint=''"
+                    reuseNode true
                 }
             }
 
@@ -27,7 +28,7 @@ pipeline {
                     sh '''
                         aws --version
                         aws s3 ls
-                        aws s3 cp test.txt $S3_BUCKET/test.txt
+                        aws s3 sync ./build $S3_BUCKET
                     '''
                 }
             }
