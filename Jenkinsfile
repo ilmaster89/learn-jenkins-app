@@ -5,6 +5,7 @@ pipeline {
         NETLIFY_SITE_ID = 'd3e939bc-bff4-4343-96b3-715de35c6758'
         // credentials -> va a prendere direttamente dal context di jenkins (config via dashboard)
         NETLIFY_AUTH_TOKEN = credentials('netlify_token_2')
+        REACT_APP_VERSION = "1.2.$BUILD_ID"
     }
 
     stages {
@@ -99,13 +100,6 @@ pipeline {
             }
         }
 
-        stage('Approval') {
-            steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    input message: 'Proceed with deployment?', ok: 'Yes, deploy!'
-                }
-            }
-        }
 
         stage('Deploy Prod') {
             agent {
