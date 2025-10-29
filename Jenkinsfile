@@ -11,6 +11,9 @@ pipeline {
     stages {
 
         stage('AWS') {
+            environment {
+                 S3_BUCKET = 's3://jenkins-test-ramponi/'
+            }
             agent {
                 docker {
                     image 'amazon/aws-cli'
@@ -24,6 +27,7 @@ pipeline {
                     sh '''
                         aws --version
                         aws s3 ls
+                        aws s3 cp test.txt $S3_BUCKET/test.txt
                     '''
                 }
             }
@@ -91,61 +95,61 @@ pipeline {
         }
 
 
-        stage('StagingDeploy') {
-            agent {
-                docker {
-                    image 'my-pw'
-                    reuseNode true
-                }
-            }
+        // stage('StagingDeploy') {
+        //     agent {
+        //         docker {
+        //             image 'my-pw'
+        //             reuseNode true
+        //         }
+        //     }
 
-            environment {
-                CI_ENVIRONMENT_URL = "placeholder"
-            }
-            steps {
-                sh '''
+        //     environment {
+        //         CI_ENVIRONMENT_URL = "placeholder"
+        //     }
+        //     steps {
+        //         sh '''
                  
-                  netlify status
-                  netlify deploy --dir=build --json > deploy.json
-                  CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy.json)
-                    npx playwright test --reporter=html
-                '''
-            }
+        //           netlify status
+        //           netlify deploy --dir=build --json > deploy.json
+        //           CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy.json)
+        //             npx playwright test --reporter=html
+        //         '''
+        //     }
 
-            post {
-                always {
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright STAGING', reportTitles: '', useWrapperFileDirectly: true])
-                }
-            }
-        }
+        //     post {
+        //         always {
+        //             publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright STAGING', reportTitles: '', useWrapperFileDirectly: true])
+        //         }
+        //     }
+        // }
 
 
-        stage('Deploy Prod') {
-            agent {
-                docker {
-                    image 'my-pw'
-                    reuseNode true
-                }
-            }
+        // stage('Deploy Prod') {
+        //     agent {
+        //         docker {
+        //             image 'my-pw'
+        //             reuseNode true
+        //         }
+        //     }
 
-            environment {
-                CI_ENVIRONMENT_URL = 'https://aesthetic-begonia-156de6.netlify.app'
-            }
-            steps {
-                sh '''
+        //     environment {
+        //         CI_ENVIRONMENT_URL = 'https://aesthetic-begonia-156de6.netlify.app'
+        //     }
+        //     steps {
+        //         sh '''
                    
-                  netlify status
-                  netlify deploy --dir=build --prod
-                    npx playwright test --reporter=html
-                '''
-            }
+        //           netlify status
+        //           netlify deploy --dir=build --prod
+        //             npx playwright test --reporter=html
+        //         '''
+        //     }
 
-            post {
-                always {
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright REMOTE', reportTitles: '', useWrapperFileDirectly: true])
-                }
-            }
-        }
+        //     post {
+        //         always {
+        //             publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright REMOTE', reportTitles: '', useWrapperFileDirectly: true])
+        //         }
+        //     }
+        // }
     }
 
     post {
